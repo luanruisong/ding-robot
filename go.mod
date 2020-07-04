@@ -1,4 +1,4 @@
-module ding_robot
+module github.com/luanruisong/ding_robot
 
 go 1.13
 
