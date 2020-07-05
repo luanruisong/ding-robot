@@ -16,9 +16,10 @@ type (
 
 const BaseDingUrl = "https://oapi.dingtalk.com/robot/send"
 
-func (d *DingClient) getFinalUrl(sign *Sign) string {
+func (d *DingClient) getFinalUrl() string {
 	url := fmt.Sprintf("%s?access_token=%s", BaseDingUrl, d.Token)
-	if sign != nil {
+	if len(d.Secret) > 0 {
+		sign := SignDataWithNow(d.Secret)
 		url += fmt.Sprintf("&timestamp=%d&sign=%s", sign.Timestamp, sign.Sign)
 	}
 	return url
@@ -28,8 +29,7 @@ func (d *DingClient) SendRobotDingMsg(msg *DingMsg) (err error) {
 	if len(d.Token) == 0 {
 		err = fmt.Errorf("can not find token")
 	} else {
-		sign := SignDataWithNow(d.Secret)
-		req := greq.NewJson(d.getFinalUrl(sign))
+		req := greq.NewJson(d.getFinalUrl())
 		resp := req.Post(msg)
 		if resp.Ok {
 			var resCode = struct {
