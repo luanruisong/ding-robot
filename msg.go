@@ -1,5 +1,7 @@
 package ding_robot
 
+import "fmt"
+
 const (
 	MsgTypeText     = "text"
 	MsgTypeLink     = "link"
@@ -33,7 +35,10 @@ type (
 	}
 )
 
-func (dm *DingMsg) initAt() {
+func (dm *DingMsg) initAt() error {
+	if dm.MsgType != MsgTypeText {
+		return fmt.Errorf("type:%s can not add at", dm.MsgType)
+	}
 	if dm.At_ == nil {
 		dm.At_ = &DingMsgAt{
 			AtMobiles: nil,
@@ -42,14 +47,18 @@ func (dm *DingMsg) initAt() {
 	}
 }
 
-func (dm *DingMsg) At(mobiles ...string) {
-	dm.initAt()
-	dm.At_.AtMobiles = append(dm.At_.AtMobiles, mobiles...)
+func (dm *DingMsg) At(mobiles ...string) (err error) {
+	if err = dm.initAt(); err == nil {
+		dm.At_.AtMobiles = append(dm.At_.AtMobiles, mobiles...)
+	}
+	return
 }
 
-func (dm *DingMsg) AtAll() {
-	dm.initAt()
-	dm.At_.IsAtAll = true
+func (dm *DingMsg) AtAll() (err error) {
+	if err = dm.initAt(); err == nil {
+		dm.At_.IsAtAll = true
+	}
+	return
 }
 
 func NewTextMsg(msg string) *DingMsg {

@@ -60,20 +60,12 @@ func (d *DingClient) SendTextMsg(msg string, atMobiles ...string) error {
 	return d.SendRobotDingMsg(dMsg)
 }
 
-func (d *DingClient) SendLinkMsg(title, text, imgSrc, href string, atMobiles ...string) error {
-	dMsg := NewLinkMsg(title, text, imgSrc, href)
-	if len(atMobiles) > 0 {
-		dMsg.At(atMobiles...)
-	}
-	return d.SendRobotDingMsg(dMsg)
+func (d *DingClient) SendLinkMsg(title, text, imgSrc, href string) error {
+	return d.SendRobotDingMsg(NewLinkMsg(title, text, imgSrc, href))
 }
 
-func (d *DingClient) SendMarkdownMsg(title, text string, atMobiles ...string) error {
-	dMsg := NewMarkdownMsg(title, text)
-	if len(atMobiles) > 0 {
-		dMsg.At(atMobiles...)
-	}
-	return d.SendRobotDingMsg(dMsg)
+func (d *DingClient) SendMarkdownMsg(title, text string) error {
+	return d.SendRobotDingMsg(NewMarkdownMsg(title, text))
 }
 
 func NewClient(token, secret string) *DingClient {
