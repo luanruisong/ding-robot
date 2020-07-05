@@ -9,25 +9,36 @@ import (
 	"time"
 )
 
-//1.把timestamp+"\n"+密钥当做签名字符串
-//2.使用HmacSHA256算法计算签名
-//3.然后进行Base64 encode
-//4.最后再把签名参数再进行urlEncode
-//5.得到最终的签名（需要使用UTF-8字符集）
+type (
+	Sign struct {
+		Timestamp int64  `json:"timestamp,omitempty"`
+		Sign      string `json:"sign,omitempty"`
+	}
+)
 
 const (
 	baseFmt = "%d\n%s"
 )
 
-func (dm *DingMsg) SignData(secret string) *SignData {
-	sd := &SignData{}
-	if len(secret) > 0 {
+func SignDataWithNow(secret string) *Sign {
+	return SignData(Now(), secret)
+}
+func SignData(ts int64, secret string) *Sign {
+
+	//1.把timestamp+"\n"+密钥当做签名字符串
+	//2.使用HmacSHA256算法计算签名
+	//3.然后进行Base64 encode
+	//4.最后再把签名参数再进行urlEncode
+	//5.得到最终的签名（需要使用UTF-8字符集）
+	if len(secret) > 0 && ts > 0 {
+		sd := &Sign{}
 		sd.Timestamp = Now()
 		signStr := fmt.Sprintf(baseFmt, sd.Timestamp, secret)
 		str := HmacSha256(signStr, secret)
 		sd.Sign = url.QueryEscape(str)
+		return sd
 	}
-	return sd
+	return nil
 }
 
 func Now() int64 {
