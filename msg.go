@@ -45,6 +45,7 @@ func (dm *DingMsg) initAt() error {
 			IsAtAll:   false,
 		}
 	}
+	return nil
 }
 
 func (dm *DingMsg) At(mobiles ...string) (err error) {
